@@ -5,5 +5,5 @@ import guru.springframework.springrestclientexamples.domain.User;
 import java.util.List;
 
 public interface ApiService {
-    List<User> getUser(Integer Limit);
+    List<User> getUsers(Integer Limit);
 }

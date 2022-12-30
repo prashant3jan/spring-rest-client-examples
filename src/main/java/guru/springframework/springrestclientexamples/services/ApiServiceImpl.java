@@ -20,9 +20,9 @@ public class ApiServiceImpl implements ApiService{
     }
 
     @Override
-    public List<User> getUser(Integer limit) {
+    public List<User> getUsers(Integer limit) {
         List<User> userData = new ArrayList<>();
-        User[] userArray = Arrays.stream(restTemplate.getForObject("http://localhost:3000/data", User[].class)).limit(limit).toArray(User[]::new);
+        User[] userArray = Arrays.stream(restTemplate.getForObject("http://localhost:3000/users", User[].class)).limit(limit).toArray(User[]::new);
         userData= Arrays.asList(userArray);
         for(int i=0; i<userData.size(); i++){
             System.out.println(userData.get(i));
