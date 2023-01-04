@@ -2,8 +2,7 @@ package guru.springframework.springrestclientexamples.controllers;
 
 import guru.springframework.springrestclientexamples.services.ApiService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -11,16 +10,9 @@ import org.springframework.web.server.ServerWebExchange;
 
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by jt on 9/22/17.
- */
 @Slf4j
-@CrossOrigin(origins = "http://localhost:8080")
-@RequestMapping("${rest.url}")
-@RestController
+@Controller
 public class UserController {
-    @Value("${rest.url}")
-    public String restUrl;
 
     private ApiService apiService;
 
@@ -36,18 +28,29 @@ public class UserController {
     @PostMapping(path="/users")
     public String formPost(Model model, ServerWebExchange serverWebExchange) throws ExecutionException, InterruptedException {
 
-        MultiValueMap<String, String> map = serverWebExchange.getFormData().toFuture().get();
-
-        Integer limit = new Integer(map.get("limit").get(0));
-
-        log.debug("Received Limit value: " + limit);
-        //default if null or zero
-        if(limit == null || limit == 0){
-            log.debug("Setting limit to default of 10");
-            limit = 10;
-        }
-
-        model.addAttribute("users", apiService.getUsers(limit));
+//        MultiValueMap<String, String> map = null;
+//        try {
+//            map = serverWebExchange.getFormData().toFuture().get();
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        Integer limit = new Integer(map.get("limit").get(0));
+//
+//        log.debug("Received Limit value: " + limit);
+//        //default if null or zero
+//        if(limit == null || limit == 0){
+//            log.debug("Setting limit to default of 10");
+//            limit = 10;
+//        }
+//
+//        model.addAttribute("users", apiService.getUsers(limit));
+        model.addAttribute("users",
+                apiService.getUsers(serverWebExchange
+                        .getFormData()
+                        .map(data -> new Integer(data.getFirst("limit")))));
 
         return "userlist";
     }
